@@ -1,4 +1,5 @@
 ﻿using HostelRoomManagement.Data;
+using HostelRoomManagement.Menus;
 using HostelRoomManagement.Repositories;
 using HostelRoomManagement.Repositories.Interfaces;
 using HostelRoomManagement.Services;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+// Create the application builder
 var builder = Host.CreateApplicationBuilder(args);
 
 // Read the connection string from appsettings.json
@@ -16,7 +18,7 @@ builder.Configuration.GetConnectionString("HostelConnection")
 ?? throw new InvalidOperationException(
 "Connection string 'HostelConnection' was not found.");
 
-// Register the database context
+// Register Entity Framework Core and SQL Server
 builder.Services.AddDbContext<HostelDbContext>(options =>
 options.UseSqlServer(connectionString));
 
@@ -28,23 +30,17 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
+// Register the main console menu
+builder.Services.AddScoped<MainMenu>();
+
 // Build the application host
 using var host = builder.Build();
 
-// Create a scope for resolving scoped services
+// Create a dependency injection scope
 using var scope = host.Services.CreateScope();
 
-// Resolve services through dependency injection
-var roomService =
-scope.ServiceProvider.GetRequiredService<IRoomService>();
+// Resolve and run the main menu
+var mainMenu = scope.ServiceProvider
+.GetRequiredService<MainMenu>();
 
-var studentService =
-scope.ServiceProvider.GetRequiredService<IStudentService>();
-
-// Display application status
-Console.WriteLine("========================================");
-Console.WriteLine("     HOSTEL ROOM MANAGEMENT SYSTEM");
-Console.WriteLine("========================================");
-Console.WriteLine("Room Service resolved successfully.");
-Console.WriteLine("Student Service resolved successfully.");
-Console.WriteLine("Dependency Injection configured successfully.");
+await mainMenu.RunAsync();
