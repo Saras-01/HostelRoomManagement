@@ -1,4 +1,5 @@
-﻿using HostelRoomManagement.Data;
+﻿using HostelRoomManagement.Audit;
+using HostelRoomManagement.Data;
 using HostelRoomManagement.Menus;
 using HostelRoomManagement.Repositories;
 using HostelRoomManagement.Repositories.Interfaces;
@@ -20,7 +21,12 @@ builder.Configuration.GetConnectionString("HostelConnection")
 
 // Register Entity Framework Core and SQL Server
 builder.Services.AddDbContext<HostelDbContext>(options =>
-options.UseSqlServer(connectionString));
+{
+    options.UseSqlServer(connectionString);
+
+    options.AddInterceptors(
+        new AuditSaveChangesInterceptor());
+});
 
 // Register repositories
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
