@@ -2,7 +2,7 @@
 
 public class AuditLog
 {
-    public int AuditId { get; set; }
+    public int AuditLogId { get; set; }
 public string EntityName { get; set; } = string.Empty;
 
     public int EntityId { get; set; }
