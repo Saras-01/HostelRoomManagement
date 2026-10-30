@@ -12,6 +12,7 @@ public class HostelDbContext : DbContext
 public DbSet<Room> Rooms => Set<Room>();
 
     public DbSet<Student> Students => Set<Student>();
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
